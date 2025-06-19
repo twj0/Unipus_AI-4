@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         U校园全自动助手 (v21.1 - 智能提交)
+// @name         U校园全自动助手 (v21.3 - 丝滑拖拽)
 // @namespace    http://tampermonkey.net/
-// @version      21.1.0
-// @description  [智能提交] 增强提交逻辑：在点击“提交”等按钮后，会自动检测并点击可能出现的“继续学习”按钮，实现更完整的自动化流程。
-// @author       AI-Powered Assistant & User Collaboration
+// @version      21.3.0
+// @description  [丝滑拖拽] 修复了UI面板在拖拽时因CSS动画冲突导致的“粘滞感”和“卡顿感”，现在可以流畅、轻松地移动面板位置。
+// @author       twj0
 // @match        *://ucontent.unipus.cn/*
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -68,11 +68,72 @@
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     const log = (message, type = 'info') => { const logContainer = document.getElementById('uca-log-container'); if (!logContainer) return; const colors = { info: '#0ea5e9', success: '#22c55e', error: '#ef4444', warn: '#f97316' }; const entry = document.createElement('div'); entry.innerHTML = `<span style="color: #94a3b8;">[${new Date().toLocaleTimeString()}]</span> ${message}`; entry.style.color = colors[type] || '#64748b'; entry.style.marginBottom = '5px'; entry.style.fontSize = '12px'; entry.style.fontFamily = 'monospace'; logContainer.appendChild(entry); logContainer.scrollTop = logContainer.scrollHeight; };
     function robustClick(element) { if (!element) return; element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })); element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true })); element.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
-    function createControlPanel() { if (document.getElementById('uca-container')) return; const container = document.createElement('div'); container.id = 'uca-container'; container.style.cssText = `position: fixed; top: 20px; left: 20px; z-index: 99999; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); width: 350px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; transition: all 0.3s ease; overflow: hidden;`; const titleBar = document.createElement('div'); titleBar.textContent = 'U校园助手 v21.1'; titleBar.style.cssText = `padding: 10px 15px; cursor: move; background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%); color: white; font-weight: 600; user-select: none; text-shadow: 0 1px 2px rgba(0,0,0,0.2);`; const content = document.createElement('div'); content.style.padding = '15px'; const selectLabel = document.createElement('label'); selectLabel.textContent = '选择课程题库:'; selectLabel.style.cssText = `display: block; font-size: 13px; color: #334155; margin-bottom: 8px;`; const courseSelect = document.createElement('select'); courseSelect.id = 'uca-course-select'; courseSelect.style.cssText = `width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 15px;`; Object.keys(COURSE_MAPS).forEach(name => courseSelect.add(new Option(name, name))); courseSelect.onchange = (e) => loadRemoteQuestionBank(e.target.value); content.appendChild(selectLabel); content.appendChild(courseSelect); const startStopButton = document.createElement('button'); startStopButton.id = 'uca-start-stop-btn'; startStopButton.textContent = '▶️ 开始自动学习'; startStopButton.style.cssText = `width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #2563eb; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s ease;`; startStopButton.onclick = toggleAutomation; content.appendChild(startStopButton); const logSection = document.createElement('div'); logSection.style.marginTop = '15px'; const logLabel = document.createElement('label'); logLabel.textContent = '操作日志:'; logLabel.style.cssText = `display: block; font-size: 12px; color: #334155; margin-bottom: 5px;`; const logContainer = document.createElement('div'); logContainer.id = 'uca-log-container'; logContainer.style.cssText = `height: 200px; background-color: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; overflow-y: auto; font-size: 12px; line-height: 1.5; color: #475569;`; logSection.appendChild(logLabel); logSection.appendChild(logContainer); content.appendChild(logSection); container.appendChild(titleBar); container.appendChild(content); document.body.appendChild(container); makeDraggable(container, titleBar); loadRemoteQuestionBank(courseSelect.value); }
-    function makeDraggable(element, handle) { let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0; handle.onmousedown = (e) => { e.preventDefault(); pos3 = e.clientX; pos4 = e.clientY; document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; }; document.onmousemove = (e) => { pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY; element.style.top = (element.offsetTop - pos2) + "px"; element.style.left = (element.offsetLeft - pos1) + "px"; }; }; }
+
+    function createControlPanel() {
+        if (document.getElementById('uca-container')) return;
+        const container = document.createElement('div');
+        container.id = 'uca-container';
+        // The `transition` property here is what causes the laggy dragging.
+        container.style.cssText = `position: fixed; top: 20px; left: 20px; z-index: 99999; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); width: 350px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; transition: all 0.3s ease; overflow: hidden;`;
+        const titleBar = document.createElement('div');
+        titleBar.textContent = 'U校园助手 v21.3';
+        titleBar.style.cssText = `padding: 10px 15px; cursor: move; background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%); color: white; font-weight: 600; user-select: none; text-shadow: 0 1px 2px rgba(0,0,0,0.2);`;
+        const content = document.createElement('div'); content.style.padding = '15px';
+        const selectLabel = document.createElement('label'); selectLabel.textContent = '选择课程题库:'; selectLabel.style.cssText = `display: block; font-size: 13px; color: #334155; margin-bottom: 8px;`;
+        const courseSelect = document.createElement('select'); courseSelect.id = 'uca-course-select'; courseSelect.style.cssText = `width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 15px;`; Object.keys(COURSE_MAPS).forEach(name => courseSelect.add(new Option(name, name))); courseSelect.onchange = (e) => loadRemoteQuestionBank(e.target.value); content.appendChild(selectLabel); content.appendChild(courseSelect);
+        const startStopButton = document.createElement('button'); startStopButton.id = 'uca-start-stop-btn'; startStopButton.textContent = '▶️ 开始自动学习'; startStopButton.style.cssText = `width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #2563eb; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s ease;`; startStopButton.onclick = toggleAutomation; content.appendChild(startStopButton);
+        const logSection = document.createElement('div'); logSection.style.marginTop = '15px';
+        const logLabel = document.createElement('label'); logLabel.textContent = '操作日志:'; logLabel.style.cssText = `display: block; font-size: 12px; color: #334155; margin-bottom: 5px;`;
+        const logContainer = document.createElement('div'); logContainer.id = 'uca-log-container'; logContainer.style.cssText = `height: 200px; background-color: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; overflow-y: auto; font-size: 12px; line-height: 1.5; color: #475569;`; logSection.appendChild(logLabel); logSection.appendChild(logContainer); content.appendChild(logSection);
+        container.appendChild(titleBar); container.appendChild(content); document.body.appendChild(container);
+        makeDraggable(container, titleBar); // Make the panel draggable
+        loadRemoteQuestionBank(courseSelect.value);
+    }
+
+    /**
+     * [UPDATED] Makes an element draggable and solves the CSS transition lag.
+     * @param {HTMLElement} element The element to make draggable.
+     * @param {HTMLElement} handle The specific part of the element that should respond to dragging.
+     */
+    function makeDraggable(element, handle) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+        const dragMouseDown = (e) => {
+            e.preventDefault();
+            // Get the initial mouse cursor position
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // [FIXED] Temporarily disable the transition to prevent lag
+            element.style.transition = 'none';
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        };
+
+        const elementDrag = (e) => {
+            e.preventDefault();
+            // Calculate the new cursor position
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // Set the element's new position
+            element.style.top = (element.offsetTop - pos2) + "px";
+            element.style.left = (element.offsetLeft - pos1) + "px";
+        };
+
+        const closeDragElement = () => {
+            // [FIXED] Re-enable the transition when dragging stops
+            element.style.transition = 'all 0.3s ease';
+            // Stop listening to mouse events
+            document.onmouseup = null;
+            document.onmousemove = null;
+        };
+
+        handle.onmousedown = dragMouseDown;
+    }
+
     function toggleAutomation() { isAutomationRunning = !isAutomationRunning; const button = document.getElementById('uca-start-stop-btn'); if (isAutomationRunning) { button.textContent = '⏹️ 停止自动化'; button.style.backgroundColor = '#dc2626'; log('自动化已启动...', 'success'); GM_deleteValue('lastProcessedTaskName'); lastAnsweredSubTask = ''; startLazyUrlChecker(); setTimeout(main, 1500); } else { button.textContent = '▶️ 开始自动学习'; button.style.backgroundColor = '#2563eb'; log('自动化已暂停。', 'warn'); isProcessing = false; stopLazyUrlChecker(); } }
 
-    // --- Answering Engine & Task Handlers ---
     async function getPageContextAndAnswers() {
         const mainTaskElement = document.querySelector('.pc-menu-activity .pc-menu-node-name');
         const mainTaskContent = mainTaskElement?.getAttribute('title')?.trim();
@@ -87,93 +148,28 @@
         if (lastAnsweredSubTask === `${mainTaskContent}-${activeSubTaskName}`) { return 'answered'; }
         const taskMapEntry = COURSE_DATA.GENERIC_UNIT_STRUCTURE.find(t => t.id_suffix === taskSuffixToFind);
         const mainTaskKey = taskMapEntry ? taskMapEntry.name : mainTaskContent;
-        const answers = COURSE_DATA.QUESTION_BANK[unitKey]?.[mainTaskKey]?.[activeSubTaskName];
+        const subTaskAnswersObject = COURSE_DATA.QUESTION_BANK[unitKey]?.[mainTaskKey];
+        let answers = null; let matchedKey = null;
+        if (subTaskAnswersObject) {
+            if (subTaskAnswersObject[activeSubTaskName]) { answers = subTaskAnswersObject[activeSubTaskName]; matchedKey = activeSubTaskName; }
+            else { const availableKeys = Object.keys(subTaskAnswersObject); matchedKey = availableKeys.find(key => key.startsWith(activeSubTaskName)); if (matchedKey) { answers = subTaskAnswersObject[matchedKey]; log(`模糊匹配成功: "${activeSubTaskName}" -> "${matchedKey}"`, 'info'); } }
+        }
         if (!answers) { log(`题库未找到答案: ${unitKey} -> ${mainTaskKey} -> ${activeSubTaskName}`, 'warn'); return null; }
-        log(`已为 "${activeSubTaskName}" 找到答案。`, 'success');
+        log(`已为 "${matchedKey || activeSubTaskName}" 找到答案。`, 'success');
         return { answers, mainTaskContent, activeSubTaskName };
     }
     async function doAnswer() { if (Object.keys(COURSE_DATA.QUESTION_BANK).length === 0) { log('题库为空...', 'warn'); await sleep(3000); if (Object.keys(COURSE_DATA.QUESTION_BANK).length === 0) { log('题库加载失败', 'error'); return; } } const context = await getPageContextAndAnswers(); if (!context) return; if (context === 'answered') { log('此部分已作答', 'info'); return; } const { answers, mainTaskContent, activeSubTaskName } = context; const choiceQuestions = document.querySelectorAll('.question-common-abs-reply, .question-common-abs-banked-cloze'); const textInputs = document.querySelectorAll('textarea.question-inputbox-input'); const fillInBlanks = document.querySelectorAll('.fe-scoop .comp-abs-input input'); let answered = false; if (choiceQuestions.length > 0 && typeof answers === 'string' && /^[A-Z](?:\s*[A-Z])*$/.test(answers.trim())) { const answerLetters = answers.trim().replace(/\s+/g, ''); for (let i = 0; i < Math.min(choiceQuestions.length, answerLetters.length); i++) { if (choiceQuestions[i].querySelector('.option.selected')) continue; for (const option of choiceQuestions[i].querySelectorAll('.option')) { if (option.querySelector('.caption')?.textContent.trim() === answerLetters[i]) { robustClick(option); await sleep(250); answered = true; break; } } } } else if (textInputs.length > 0 && typeof answers === 'string') { const answerLines = answers.split('\n').map(l => l.replace(/^\d+\.?\)?\s*/, '').trim()).filter(Boolean); for (let i = 0; i < Math.min(textInputs.length, answerLines.length); i++) { if (!textInputs[i].value) { textInputs[i].value = answerLines[i]; textInputs[i].dispatchEvent(new Event('input', { bubbles: true })); await sleep(250); answered = true; } } } else if (fillInBlanks.length > 0 && typeof answers === 'string') { const answerLines = answers.split('\n').map(l => l.replace(/^\d+\.?\)?\s*/, '').trim()).filter(Boolean); for (let i = 0; i < Math.min(fillInBlanks.length, answerLines.length); i++) { if (!fillInBlanks[i].value) { fillInBlanks[i].value = answerLines[i]; fillInBlanks[i].dispatchEvent(new Event('input', { bubbles: true })); await sleep(250); answered = true; } } } if (answered) { log(`应用答案: ${activeSubTaskName}`, "success"); if (activeSubTaskName !== "Part III") { lastAnsweredSubTask = `${mainTaskContent}-${activeSubTaskName}`; } } }
     async function handleVideoTask() { const video = document.querySelector('video'); if (!video) return; log("处理视频...", 'info'); video.muted = true; await sleep(500); const onCanPlay = () => { if (video.duration) { video.currentTime = video.duration - 1.5; video.play().catch(e => log('视频播放被阻止', 'warn')); log("视频已快进。", 'success'); } }; if (video.readyState >= 2) { onCanPlay(); } else { video.addEventListener('canplay', onCanPlay, { once: true }); } await sleep(2500); }
     async function handleSkippableTask(taskName) { log(`跳过任务: "${taskName}"`, 'info'); await sleep(2000); }
     async function handleVocabularyTask() { log("处理单词卡...", 'info'); const progressContainer = document.querySelector('div.ratio'); if (progressContainer) { log('检测到进度条，使用进度追踪模式。', 'info'); const spans = progressContainer.querySelectorAll('span'); if (spans.length === 2) { let currentCount = parseInt(spans[0].textContent, 10); let totalCount = parseInt(spans[1].textContent.replace('/', ''), 10); if (!isNaN(currentCount) && !isNaN(totalCount)) { for (let i = currentCount; i < totalCount; i++) { if (!isAutomationRunning) return; log(`处理单词卡: ${i} / ${totalCount}...`); const nextButton = document.querySelector('.vocActions .next:not(.swiper-button-disabled)'); if (!nextButton) { log('“下一张”按钮消失，提前结束。', 'warn'); break; } robustClick(nextButton); const expectedNext = i + 1; let waitTimeout = 5000; while (waitTimeout > 0) { const newCurrent = parseInt(document.querySelector('div.ratio span:first-child')?.textContent || `${i}`, 10); if (newCurrent === expectedNext) break; await sleep(100); waitTimeout -= 100; } if (waitTimeout <= 0) { log('等待卡片更新超时。', 'error'); break; } } log(`进度追踪完成，共处理 ${totalCount} 张卡片。`, 'success'); await sleep(2000); return; } } } log('未检测到进度条或解析失败，使用备用观察者模式。', 'warn'); let maxClicks = 150; while (maxClicks-- > 0) { if (!isAutomationRunning) return; const nextButton = document.querySelector('.vocActions .next:not(.swiper-button-disabled)'); if (!nextButton) { log("单词卡已翻完。", 'success'); break; } robustClick(nextButton); await sleep(700); } if (maxClicks <= 0) log("单词卡点击次数达到上限。", 'warn'); log("单词卡任务后等待2秒以稳定页面...", "info"); await sleep(2000); }
-
-    // --- Core Automation Engine & Main Logic ---
     async function main() { if (isProcessing || !isAutomationRunning) return; isProcessing = true; try { await sleep(3500); const mainTaskNameElement = document.querySelector('.pc-menu-activity .pc-menu-node-name'); const currentMainTaskName = mainTaskNameElement?.getAttribute('title')?.trim(); if (!currentMainTaskName) throw new Error("无法识别当前主任务。"); const lastProcessed = GM_getValue('lastProcessedTaskName', ''); if (currentMainTaskName === lastProcessed && location.href === GM_getValue('lastUrl', '')) { log(`检测到卡在任务: "${currentMainTaskName}"。强制导航。`, 'warn'); await navigateToNextMainTask(); return; } if (currentMainTaskName !== lastProcessed) { lastAnsweredSubTask = ''; } const unitTaskMatch = currentMainTaskName.match(/^(\d+)-(\d+)/); if (!unitTaskMatch) { log(`无法从任务 "${currentMainTaskName}" 解析出 单元-任务ID，尝试导航。`, 'warn'); await navigateToNextMainTask(); return; } const unitId = unitTaskMatch[1]; const taskId = unitTaskMatch[2]; const taskSuffixToFind = `-${taskId}`; log(`读取 [Unit ${unitId}] 任务地图: "${currentMainTaskName}" (模板后缀: ${taskSuffixToFind})`, 'success'); const taskData = COURSE_DATA.GENERIC_UNIT_STRUCTURE.find(t => t.id_suffix === taskSuffixToFind); if (!taskData) { log(`未在地图中找到后缀为 "${taskSuffixToFind}" 的执行模板，尝试导航。`, 'warn'); await navigateToNextMainTask(); return; } if (taskData.type === 'standalone') { log(`执行独立任务: ${taskData.name}`); await executeActions(taskData.actions, taskData); } else if (taskData.type === 'composite' && taskData.children) { log(`执行复合任务: ${taskData.name}`); for (const subTaskConfig of taskData.children) { if (!isAutomationRunning) return; const subTaskElements = Array.from(document.querySelectorAll('.pc-header-tabs-container .pc-tab-view-container')); const subTaskElement = subTaskElements.find(el => (el.getAttribute('title') || el.textContent.trim()) === subTaskConfig.name); if (subTaskElements.length > 0 && !subTaskElement) { log(`- 未找到子任务Tab: "${subTaskConfig.name}"，跳过。`, 'warn'); continue; } if (subTaskElement) { log(`- 切换到: "${subTaskConfig.name}"`, 'info'); robustClick(subTaskElement); await waitForSubTaskActive(subTaskConfig.name); } else { log(`- 处理无Tab子任务: "${subTaskConfig.name}"`, 'info'); } await executeActions(subTaskConfig.actions, subTaskConfig); } } log(`任务 "${currentMainTaskName}" 已按计划执行完毕。`, 'info'); await GM_setValue('lastProcessedTaskName', currentMainTaskName); await GM_setValue('lastUrl', location.href); await navigateToNextMainTask(); } catch (error) { log(`主流程错误: ${error.message}`, 'error'); console.error(error); toggleAutomation(); } finally { isProcessing = false; } }
     async function executeActions(actions, config) { if (!actions || actions.length === 0) return; log(`- 执行动作序列...`, 'info'); for (const action of actions) { if (!isAutomationRunning) { log('自动化已停止，中止动作序列。', 'warn'); return; } log(`-- 动作: ${action.type}` + (action.text ? ` (${action.text})` : '')); switch (action.type) { case 'video': await handleVideoTask(); break; case 'skip': await handleSkippableTask(config.name); break; case 'vocabulary': await handleVocabularyTask(); break; case 'quiz': await doAnswer(); break; case 'click': const success = await handleSpecificClick(action.text); if (!success) { log(`点击动作失败，中止序列。`, 'error'); return; } break; default: log(`未知动作类型: "${action.type}"`, 'warn'); } await sleep(1500); } }
-
-    /**
-     * [UPDATED] Finds and clicks a primary button, then optionally clicks "Continue Learning".
-     * @param {string} buttonText The text of the primary button to click.
-     * @returns {boolean} True if the primary button was clicked, otherwise false.
-     */
-    async function handleSpecificClick(buttonText) {
-        log(`正在查找按钮 [${buttonText}]...`, 'info');
-        const selector = '.btn, button.ant-btn, .btn_learn_goon';
-        const maxWaitTime = 7000;
-        const interval = 500;
-        let elapsedTime = 0;
-        let primaryButtonClicked = false;
-
-        // --- Part 1: Find and click the required primary button ---
-        while (elapsedTime < maxWaitTime) {
-            if (!isAutomationRunning) return false;
-            const buttons = document.querySelectorAll(selector);
-            for (const btn of buttons) {
-                if (btn && btn.textContent.includes(buttonText) && !btn.disabled && btn.offsetParent !== null) {
-                    btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    await sleep(400);
-                    log(`点击按钮: "${btn.textContent.trim()}"`, "success");
-                    robustClick(btn);
-                    await sleep(2000);
-                    const confirmButton = document.querySelector('.ant-modal-confirm-btns .ant-btn-primary');
-                    if (confirmButton && confirmButton.offsetParent !== null) {
-                        log("点击确认弹窗", 'info');
-                        robustClick(confirmButton);
-                    }
-                    primaryButtonClicked = true;
-                    break;
-                }
-            }
-            if (primaryButtonClicked) break;
-            await sleep(interval);
-            elapsedTime += interval;
-        }
-
-        if (!primaryButtonClicked) {
-            log(`未找到可用的 [${buttonText}] 按钮。`, 'warn');
-            return false;
-        }
-
-        // --- Part 2: [NEW] Optionally, check for and click "Continue Learning" ---
-        await sleep(1000); // Give page time to transition after primary click
-        log('检查是否存在“继续学习”按钮...', 'info');
-        const continueButtonText = '继续学习';
-        const continueMaxWait = 3000;
-        let continueElapsedTime = 0;
-        while (continueElapsedTime < continueMaxWait) {
-            const continueButton = Array.from(document.querySelectorAll(selector)).find(btn =>
-                btn.textContent.includes(continueButtonText) && !btn.disabled && btn.offsetParent !== null
-            );
-            if (continueButton) {
-                log('发现并点击“继续学习”按钮。', 'success');
-                robustClick(continueButton);
-                return true; // End the function here
-            }
-            await sleep(500);
-            continueElapsedTime += 500;
-        }
-
-        log('未发现“继续学习”按钮，正常继续。', 'info');
-        return true; // Return true because the primary action succeeded
-    }
-
+    async function handleSpecificClick(buttonText) { log(`正在查找按钮 [${buttonText}]...`, 'info'); const selector = '.btn, button.ant-btn, .btn_learn_goon'; const maxWaitTime = 7000; const interval = 500; let elapsedTime = 0; let primaryButtonClicked = false; while (elapsedTime < maxWaitTime) { if (!isAutomationRunning) return false; const buttons = document.querySelectorAll(selector); for (const btn of buttons) { if (btn && btn.textContent.includes(buttonText) && !btn.disabled && btn.offsetParent !== null) { btn.scrollIntoView({ behavior: 'smooth', block: 'center' }); await sleep(400); log(`点击按钮: "${btn.textContent.trim()}"`, "success"); robustClick(btn); await sleep(2000); const confirmButton = document.querySelector('.ant-modal-confirm-btns .ant-btn-primary'); if (confirmButton && confirmButton.offsetParent !== null) { log("点击确认弹窗", 'info'); robustClick(confirmButton); } primaryButtonClicked = true; break; } } if (primaryButtonClicked) break; await sleep(interval); elapsedTime += interval; } if (!primaryButtonClicked) { log(`未找到可用的 [${buttonText}] 按钮。`, 'warn'); return false; } await sleep(1000); log('检查是否存在“继续学习”按钮...', 'info'); const continueButtonText = '继续学习'; const continueMaxWait = 3000; let continueElapsedTime = 0; while (continueElapsedTime < continueMaxWait) { const continueButton = Array.from(document.querySelectorAll(selector)).find(btn => btn.textContent.includes(continueButtonText) && !btn.disabled && btn.offsetParent !== null); if (continueButton) { log('发现并点击“继续学习”按钮。', 'success'); robustClick(continueButton); return true; } await sleep(500); continueElapsedTime += 500; } log('未发现“继续学习”按钮，正常继续。', 'info'); return true; }
     async function navigateToNextMainTask() { await sleep(2500); log("导航到下一个主任务...", 'info'); const allMainTasks = Array.from(document.querySelectorAll('.pc-slider-menu-micro')); const currentMainTask = document.querySelector('.pc-menu-activity'); const currentIndex = currentMainTask ? allMainTasks.indexOf(currentMainTask) : -1; if (currentIndex === -1) { log("无法定位当前主任务以进行导航。", 'error'); return; } const nextIndex = currentIndex + 1; if (nextIndex < allMainTasks.length) { const nextTaskElement = allMainTasks[nextIndex]; const taskTitle = nextTaskElement.getAttribute('title') || nextTaskElement.textContent.trim(); log(`点击: ${taskTitle}`); robustClick(nextTaskElement); } else { log("🎉 恭喜！课程已全部完成。", 'success'); toggleAutomation(); } }
     function startLazyUrlChecker() { if (lazyUrlCheckerInterval) return; let lastUrl = location.href; lazyUrlCheckerInterval = setInterval(() => { if (location.href !== lastUrl) { log("检测到URL变化，准备执行...", "info"); lastUrl = location.href; if (!isProcessing && isAutomationRunning) { setTimeout(main, 1500); } } }, 1000); log('低资源URL检查器已启动。', 'info'); }
     function stopLazyUrlChecker() { if (lazyUrlCheckerInterval) { clearInterval(lazyUrlCheckerInterval); lazyUrlCheckerInterval = null; } log('低资源URL检查器已停止。', 'warn'); }
     function startOptimizedModalObserver() { const modalObserver = new MutationObserver((mutations) => { for (const mutation of mutations) { if (mutation.addedNodes.length > 0) { for (const node of mutation.addedNodes) { if (node.nodeType === 1) { const confirmButton = node.querySelector('.ant-modal-confirm-btns .ant-btn-primary'); if (confirmButton && confirmButton.offsetParent !== null && confirmButton.textContent.includes('确 定')) { log('检测到弹窗被添加，正在点击...', 'info'); robustClick(confirmButton); return; } } } } } }); modalObserver.observe(document.body, { childList: true, subtree: true }); log('优化的弹窗监视器已启动。', 'info'); }
     async function waitForSubTaskActive(taskName) { log(`- 等待 "${taskName}" 加载完成...`, 'info'); const maxWaitTime = 10000; const interval = 250; let elapsedTime = 0; while (elapsedTime < maxWaitTime) { const activeTab = document.querySelector('.pc-header-tab-activity .pc-tab-view-container'); if (activeTab) { const activeName = activeTab.getAttribute('title') || activeTab.textContent.trim(); if (activeName === taskName) { log(`- "${taskName}" 已激活。`, 'success'); await sleep(500); return; } } await sleep(interval); elapsedTime += interval; } throw new Error(`等待 "${taskName}" 超时。`); }
-
-    // --- Initialization ---
-    const initInterval = setInterval(() => { if (document.body) { clearInterval(initInterval); createControlPanel(); startOptimizedModalObserver(); log('U校园助手(v21.1)已加载。'); } }, 100);
+    const initInterval = setInterval(() => { if (document.body) { clearInterval(initInterval); createControlPanel(); startOptimizedModalObserver(); log('U校园助手(v21.3)已加载。'); } }, 100);
 
 })();
