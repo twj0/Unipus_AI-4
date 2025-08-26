@@ -72,6 +72,29 @@ class LogConfig:
     console_output: bool = True
     file_output: bool = True
 
+@dataclass
+class IntelligentAnsweringConfig:
+    """智能答题配置"""
+    max_extraction_retries: int = 3
+    confidence_threshold: float = 0.7
+    enable_fuzzy_matching: bool = True
+    auto_verify_answers: bool = True
+    cache_ttl_days: int = 30
+    max_cache_size: int = 10000
+    auto_backup_interval: int = 3600
+
+    # 提取策略
+    use_network_monitoring: bool = True
+    use_page_analysis: bool = True
+    use_dom_inspection: bool = True
+    trial_answer_timeout: int = 30
+
+    # 缓存策略
+    enable_memory_cache: bool = True
+    enable_disk_cache: bool = True
+    enable_json_backup: bool = True
+    compression_enabled: bool = False
+
 class Settings:
     """配置管理类"""
     
@@ -94,6 +117,15 @@ class Settings:
         self.answer = AnswerConfig(**self.config.get("answer", {}))
         self.ui = UIConfig(**self.config.get("ui", {}))
         self.log = LogConfig(**self.config.get("log", {}))
+
+        # 智能答题配置
+        intelligent_config = self.config.get("intelligent_answering", {})
+        extraction_strategy = intelligent_config.get("extraction_strategy", {})
+        cache_strategy = intelligent_config.get("cache_strategy", {})
+
+        # 合并配置
+        merged_intelligent_config = {**intelligent_config, **extraction_strategy, **cache_strategy}
+        self.intelligent_answering = IntelligentAnsweringConfig(**merged_intelligent_config)
         
         # U校园相关配置
         self.ucampus_base_url = "https://ucontent.unipus.cn"

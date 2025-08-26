@@ -2,3 +2,7 @@ FINAL_TEST_REPORT.md
 PROJECT_COMPLETION_SUMMARY.md
 docs/INTELLIGENT_ANSWERING.md
 .env
+src/__pycache__/__init__.cpython-311.pyc
+src/config/__pycache__/__init__.cpython-311.pyc
+src/config/__pycache__/settings.cpython-311.pyc
+uv 使用.md
