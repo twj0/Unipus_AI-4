@@ -1,0 +1,77 @@
+# U校园自动化框架依赖包
+
+# 浏览器自动化
+playwright==1.40.0
+selenium==4.15.2
+
+# 数据处理
+requests==2.31.0
+beautifulsoup4==4.12.2
+lxml==4.9.3
+pandas==2.1.3
+
+# 配置管理
+pyyaml==6.0.1
+python-dotenv==1.0.0
+
+# 日志记录
+loguru==0.7.2
+
+# GUI界面
+tkinter-tooltip==2.1.0
+customtkinter==5.2.0
+
+# 任务调度
+schedule==1.2.0
+apscheduler==3.10.4
+
+# 数据库
+# sqlite3 - Python内置模块
+
+# 工具库
+click==8.1.7
+rich==13.7.0
+tqdm==4.66.1
+
+# 开发工具
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-mock==3.12.0
+black==23.11.0
+flake8==6.1.0
+
+# 网络请求
+httpx==0.25.2
+aiohttp==3.9.1
+
+# 图像处理（用于验证码识别）
+pillow==10.1.0
+opencv-python==4.8.1.78
+
+# 机器学习（用于智能识别）
+scikit-learn==1.3.2
+numpy==1.25.2
+
+# 加密解密
+cryptography==41.0.8
+
+# 时间处理
+python-dateutil==2.8.2
+
+# 文件处理
+openpyxl==3.1.2
+xlsxwriter==3.1.9
+
+# 系统监控
+psutil==5.9.6
+
+# 音频处理（用于音频验证码）
+pydub==0.25.1
+
+# 文本处理
+jieba==0.42.1
+fuzzywuzzy==0.18.0
+
+# 异步支持
+asyncio
+aiofiles==23.2.1

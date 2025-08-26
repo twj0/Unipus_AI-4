@@ -1,0 +1,118 @@
+# U校园自动化框架配置文件
+
+# 浏览器配置
+browser:
+  name: chromium  # chromium, firefox, webkit
+  headless: false  # 是否无头模式
+  slow_mo: 100     # 操作延迟(毫秒)
+  timeout: 30000   # 超时时间(毫秒)
+  viewport_width: 1920
+  viewport_height: 1080
+  user_agent: ""   # 自定义User-Agent
+
+# 延迟配置
+delays:
+  page_load: 2.0      # 页面加载等待时间(秒)
+  element_wait: 1.0   # 元素等待时间(秒)
+  click_delay: 0.5    # 点击延迟(秒)
+  type_delay: 0.1     # 输入延迟(秒)
+  video_check: 3.0    # 视频检查间隔(秒)
+  retry_delay: 2.0    # 重试延迟(秒)
+
+# 视频配置
+video:
+  auto_play: true        # 是否自动播放
+  default_speed: 2.0     # 默认播放速度
+  speed_options:         # 可选播放速度
+    - 1.0
+    - 1.25
+    - 1.5
+    - 2.0
+    - 2.5
+    - 3.0
+    - 4.0
+  muted: true           # 是否静音
+  skip_ads: true        # 是否跳过广告
+
+# 答题配置
+answer:
+  auto_submit: true      # 是否自动提交
+  show_preview: true     # 是否显示预览
+  confirm_delay: 0.5     # 确认延迟(秒)
+  max_retries: 3         # 最大重试次数
+  skip_completed: true   # 是否跳过已完成
+
+# 界面配置
+ui:
+  theme: light          # 主题: light, dark
+  language: zh          # 语言: zh, en
+  window_width: 800     # 窗口宽度
+  window_height: 600    # 窗口高度
+  always_on_top: false  # 是否置顶
+
+# 日志配置
+log:
+  level: INFO           # 日志级别: DEBUG, INFO, WARNING, ERROR
+  console_output: true  # 是否输出到控制台
+  file_output: true     # 是否输出到文件
+  rotation: "10 MB"     # 日志轮转大小
+  retention: "7 days"   # 日志保留时间
+
+# 题库配置
+question_bank:
+  remote_url: "https://raw.githubusercontent.com/twj0/Unipus_AI-4/refs/heads/main/U%E6%A0%A1%E5%9B%AD%20%E6%96%B0%E4%B8%80%E4%BB%A3%E5%A4%A7%E5%AD%A6%E8%8B%B1%E8%AF%AD%20%E7%BB%BC%E5%90%88%E6%95%99%E7%A8%8B1%E8%8B%B1%E8%AF%AD%E9%A2%98%E5%BA%93.json"
+  cache_duration: 86400000  # 缓存时间(毫秒)
+  enable_local: true        # 是否启用本地缓存
+
+# 错误处理配置
+error_handling:
+  auto_retry: true          # 是否自动重试
+  max_retries: 3           # 最大重试次数
+  retry_multiplier: 2      # 重试间隔倍数
+  log_errors: true         # 是否记录错误
+  show_notifications: true # 是否显示通知
+
+# 高级配置
+advanced:
+  enable_page_observer: true    # 是否启用页面监听
+  enable_url_observer: true     # 是否启用URL监听
+  enable_hotkeys: true          # 是否启用快捷键
+  enable_statistics: true       # 是否启用统计
+  compatibility_mode: false     # 是否启用兼容模式
+  check_compatibility: true     # 是否检查兼容性
+
+# 快捷键配置
+hotkeys:
+  start: "Ctrl+Enter"           # 开始快捷键
+  stop: "Ctrl+Shift+Enter"      # 停止快捷键
+  toggle_auto: "Ctrl+Alt+A"     # 切换自动模式
+
+# 智能答题配置
+intelligent_answering:
+  max_extraction_retries: 3     # 最大答案提取重试次数
+  confidence_threshold: 0.7     # 答案置信度阈值
+  enable_fuzzy_matching: true   # 是否启用模糊匹配
+  auto_verify_answers: true     # 是否自动验证答案
+  cache_ttl_days: 30           # 缓存有效期（天）
+  max_cache_size: 10000        # 最大缓存条目数
+  auto_backup_interval: 3600   # 自动备份间隔（秒）
+
+  # 答案提取策略
+  extraction_strategy:
+    use_network_monitoring: true    # 使用网络监控
+    use_page_analysis: true         # 使用页面分析
+    use_dom_inspection: true        # 使用DOM检查
+    trial_answer_timeout: 30        # 试答超时时间（秒）
+
+  # 缓存策略
+  cache_strategy:
+    enable_memory_cache: true       # 启用内存缓存
+    enable_disk_cache: true         # 启用磁盘缓存
+    enable_json_backup: true        # 启用JSON备份
+    compression_enabled: false      # 启用压缩
+
+# 数据持久化配置
+data_persistence:
+  save_settings: true           # 是否保存设置
+  save_history: false          # 是否保存历史
+  storage_prefix: "ucampus_"   # 存储键前缀
