@@ -1,0 +1,152 @@
+[
+  {
+    "name": "TGC",
+    "value": "eyJhbGciOiJIUzUxMiJ9.ZXlKaGJHY2lPaUprYVhJaUxDSmxibU1pT2lKQk1USTRRMEpETFVoVE1qVTJJbjAuLko2eEVrYUtNTzVyc2p1TzE1aDUzbncuM3ROMUZoWm0zajdSS3hFMlk5aDVIYmI1RFE0QzBKV0p2eUo5UVplVldNcTRhbHVzbkJzSkMyXzhqXzFnYzRhV0pVZU40RWtpZWxmaW9uLVpUbDV2XzJFY0M2cFc1ZTI2V0pRSFFmTWQyS1kuWGxta2VrY2lhcU9hNnRWdFR1VGdCZw.eq4HVfGIrQMSswFiaxGAQO6x_Bll5tS-ZdCeM4q8GFe8wnDax5CQyJ6JqO-ZEore0BLGATGUEhMoQtMscLt1gA",
+    "domain": "sso.unipus.cn",
+    "path": "/sso",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESID",
+    "value": "c9ae7734826e2a7e09",
+    "domain": "uai.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESTIME",
+    "value": "1756280250288",
+    "domain": "uai.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESTIME",
+    "value": "1756280254389",
+    "domain": "sso.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESID",
+    "value": "5d861767b1e76ade54",
+    "domain": "sso.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "Y1vJ4IdorMglXdNk",
+    "value": "\"/Cp7iAmx5BuoAL2/A/lhPKMGJwxwXj3a46khQrt5920=\"",
+    "domain": ".unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "AFsyuFERGolRTTwfegrggT",
+    "value": "1fea02249217674c83d97fac5d86d95f",
+    "domain": ".unipus.cn",
+    "path": "/",
+    "expires": 1790840252.507316,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "sajssdk_2015_cross_new_user",
+    "value": "1",
+    "domain": ".unipus.cn",
+    "path": "/",
+    "expires": 1756310399,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "sensorsdata2015jssdkcross",
+    "value": "%7B%22distinct_id%22%3A%227cba75e5f5224380ac9db63c2864b715%22%2C%22first_id%22%3A%22198ea75ead5111e-0075ebe9ce6a5544-26001951-2073600-198ea75ead611c0%22%2C%22props%22%3A%7B%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTk4ZWE3NWVhZDUxMTFlLTAwNzVlYmU5Y2U2YTU1NDQtMjYwMDE5NTEtMjA3MzYwMC0xOThlYTc1ZWFkNjExYzAiLCIkaWRlbnRpdHlfbG9naW5faWQiOiI3Y2JhNzVlNWY1MjI0MzgwYWM5ZGI2M2MyODY0YjcxNSJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%227cba75e5f5224380ac9db63c2864b715%22%7D%2C%22%24device_id%22%3A%22198ea75ead5111e-0075ebe9ce6a5544-26001951-2073600-198ea75ead611c0%22%7D",
+    "domain": ".unipus.cn",
+    "path": "/",
+    "expires": 1790840478.290078,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESTIME",
+    "value": "1756280265137",
+    "domain": "datasink.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESID",
+    "value": "0f0e88508a1fc10efc",
+    "domain": "datasink.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESTIME",
+    "value": "1756280265411",
+    "domain": "unicloud.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "HWWAFSESID",
+    "value": "6a81276f03f703718c",
+    "domain": "unicloud.unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "SSOExpireTime",
+    "value": "1756287693",
+    "domain": ".unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "jwt",
+    "value": "eyJhbGciOiJSUzI1NiIsImtpZCI6InVuaXB1cy1zc28ifQ.eyJqdGkiOiJHMTN1djFGUUM4cUhWWEx2SWFZNHNnIiwiaWF0IjoxNzU2MjgwNDkzLCJleHAiOjE3NTY0NTMyOTMsIm5iZiI6MTc1NjI4MDQzMywiaXNzIjoiaHR0cHM6Ly9zc28udW5pcHVzLmNuIiwiYXVkIjoiY24udW5pcHVzLnNzby5qd3QiLCJzdWIiOiIxMDAwMDAwIiwib3BlbklkIjoiN2NiYTc1ZTVmNTIyNDM4MGFjOWRiNjNjMjg2NGI3MTUiLCJ1c2VybmFtZSI6IjEzODc0Mzk1NjQwIiwibmlja25hbWUiOiJHZW5zaGluIiwicGhvbmUiOiIxMzg3NDM5NTY0MCIsInRpbWVzdGFtcCI6MTc1NjI4MDQ5Mywia2V5IjoidW5pcHVzLXNzbyJ9.fS5nXos9YwDrRfDMGzpkWQWi9Kgm3URr-j6ir9LCaMg2xeV3BjWUSQXaAMtUOX4mKGmt87zCI-wz6auP9IDlnNL-fgDdpZpJp2YbCqkZ6Anf9sXnXsAm5aymS5eetbLcxz4Jxg3ZSGT8DN9l2ZbWKEda3XWf45WbKHOfDwC0BocUF3F0zl-EIhrX495_ylAzfEoLlettUNVjanm13_u9lUA_ssrzBmALNlaEbRAyUE15aXM5icw6wT7o2vYtz2tYenvn1SCrkaET48FDYdqNCL7nB4iBPqc7k5t2tPLpL7UJ_jnbCdgckBWCKz8Q-LF_MgNcvR01JmRERrwy8y_RGA",
+    "domain": ".unipus.cn",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]

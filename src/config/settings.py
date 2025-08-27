@@ -132,8 +132,9 @@ class Settings:
         self.ucampus_login_url = "https://sso.unipus.cn/sso/login"
         
         # 用户凭据
-        self.username = os.getenv("UCAMPUS_USERNAME", "")
-        self.password = os.getenv("UCAMPUS_PASSWORD", "")
+        # 兼容多种环境变量命名（优先 UCAMPUS_*，其次兼容 .env 中的 username/password）
+        self.username = os.getenv("UCAMPUS_USERNAME") or os.getenv("username") or ""
+        self.password = os.getenv("UCAMPUS_PASSWORD") or os.getenv("password") or ""
         
         # 题库配置
         self.question_bank_url = "https://raw.githubusercontent.com/twj0/Unipus_AI-4/refs/heads/main/U%E6%A0%A1%E5%9B%AD%20%E6%96%B0%E4%B8%80%E4%BB%A3%E5%A4%A7%E5%AD%A6%E8%8B%B1%E8%AF%AD%20%E7%BB%BC%E5%90%88%E6%95%99%E7%A8%8B1%E8%8B%B1%E8%AF%AD%E9%A2%98%E5%BA%93.json"
